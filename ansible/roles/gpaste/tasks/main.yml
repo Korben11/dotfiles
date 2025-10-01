@@ -1,0 +1,29 @@
+---
+- name: Install GPaste
+  become: true
+  ansible.builtin.apt:
+    name: gpaste
+    state: present
+# present version is failing on startup
+# Could not acquire DBus name.
+# journalctl --user -u org.gnome.GPaste.service
+# systemctl status --user org.gnome.GPaste.service
+- name: Enable and start GPaste service
+  ansible.builtin.systemd:
+    name: org.gnome.GPaste.service
+    enabled: true
+    state: started
+    scope: user
+# editing settings with GPaste UI writes those to dconf
+# to check correct values make edits and check with following command correct key value pairs
+# dconf dump /org/gnome/GPaste/
+- name: Configure GPaste image support
+  community.general.dconf:
+    key: "/org/gnome/GPaste/images-support"
+    value: 'true'
+    state: present
+- name: Configure GPaste ui keyboard shortcut
+  community.general.dconf:
+    key: "/org/gnome/GPaste/launch-ui"
+    value: "'<Ctrl><Shift>v'"
+    state: present

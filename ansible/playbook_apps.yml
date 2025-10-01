@@ -1,0 +1,7 @@
+---
+- name: Install apps
+  hosts: localhost
+  tasks:
+    - name: Clipboard manager setup
+      ansible.builtin.import_role:
+        name: gpaste

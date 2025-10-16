@@ -5,3 +5,6 @@
     - name: Clipboard manager setup
       ansible.builtin.import_role:
         name: gpaste
+    - name: Docker image inspection tool setup
+      ansible.builtin.import_role:
+        name: docker_dive

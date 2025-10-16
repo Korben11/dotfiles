@@ -1,0 +1,4 @@
+---
+# https://github.com/darkwizard242/ansible-role-dive
+- name: darkwizard242.dive
+  version: 1.5.2

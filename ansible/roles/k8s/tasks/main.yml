@@ -1,0 +1,3 @@
+- name: Install HELM
+  ansible.builtin.import_role:
+    name: somaz94.ansible_k8s_iac_tool.install_helm

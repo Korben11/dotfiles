@@ -8,3 +8,6 @@
     - name: Docker image inspection tool setup
       ansible.builtin.import_role:
         name: docker_dive
+    - name: K8s tooling setup
+      ansible.builtin.import_role:
+        name: k8s

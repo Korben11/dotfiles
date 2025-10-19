@@ -3,6 +3,8 @@ roles:
   # https://github.com/darkwizard242/ansible-role-dive
   - name: darkwizard242.dive
     version: 1.5.2
+  # https://github.com/alvistack/ansible-role-baobab
+  - name: alvistack.baobab
 collections:
   # https://galaxy.ansible.com/ui/repo/published/somaz94/ansible_k8s_iac_tool/
   - name: somaz94.ansible_k8s_iac_tool

@@ -11,3 +11,6 @@
     - name: K8s tooling setup
       ansible.builtin.import_role:
         name: k8s
+    - name: Disk tools setup
+      ansible.builtin.import_role:
+        name: disk_tools

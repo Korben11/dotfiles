@@ -1,0 +1,4 @@
+- name: Install baobab (visual disk space analyzer)
+  become: true
+  ansible.builtin.import_role:
+    name: alvistack.baobab

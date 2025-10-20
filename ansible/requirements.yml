@@ -8,3 +8,5 @@ roles:
 collections:
   # https://galaxy.ansible.com/ui/repo/published/somaz94/ansible_k8s_iac_tool/
   - name: somaz94.ansible_k8s_iac_tool
+  # https://github.com/scruffaluff/bootware/tree/main
+  - name: scruffaluff.bootware

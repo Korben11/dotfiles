@@ -1,0 +1,133 @@
+---
+# https://github.com/scruffaluff/bootware/blob/main/ansible_collections/scruffaluff/bootware/roles/kubectl/tasks/main.yaml
+- name: Install Kubectl for Alpine
+  become: true
+  community.general.apk:
+    name: kubectl
+    repository: http://dl-cdn.alpinelinux.org/alpine/edge/community
+    state: latest
+    update_cache: true
+  tags:
+    - install
+  when: ansible_pkg_mgr == "apk"
+
+- name: Install Kubectl for FreeBSD
+  become: true
+  community.general.pkgng:
+    name: kubectl
+  tags:
+    - install
+  when: ansible_system == "FreeBSD"
+
+- name: Install Kubectl for Linux
+  ansible.builtin.package:
+    name: kubectl
+  become: true
+  ignore_errors: true
+  register: kubectl_linux
+  tags:
+    - install
+  when: ansible_system == "Linux" and ansible_pkg_mgr != "apk"
+
+- name: Get latest Kubectl version for Linux
+  ansible.builtin.uri:
+    method: GET
+    return_content: true
+    url: https://dl.k8s.io/release/stable.txt
+  register: kubectl_version
+  tags:
+    - install
+  when: >-
+    ansible_system == "Linux" and ansible_pkg_mgr != "apk" and kubectl_linux is
+    failed
+
+- name: Install Kubectl for Linux
+  ansible.builtin.get_url:
+    dest: /usr/local/bin/kubectl
+    force: true
+    mode: "755"
+    url: >-
+      https://dl.k8s.io/release/{{ kubectl_version.content }}/bin/linux/{{
+      system_architecture }}/kubectl
+  become: true
+  tags:
+    - install
+  when: >-
+    ansible_system == "Linux" and ansible_pkg_mgr != "apk" and kubectl_linux is
+    failed
+
+- name: Install Kubectl for MacOS
+  become: true
+  become_user: "{{ brew_user }}"
+  community.general.homebrew:
+    name: kubectl
+  tags:
+    - install
+  when: ansible_system == "Darwin"
+
+- name: Install Kubectl for Windows
+  community.windows.win_scoop:
+    global: true
+    name: kubectl
+  tags:
+    - install
+  when: ansible_system == "Win32NT"
+
+- name: Create Kubectl temporary directory for Unix
+  ansible.builtin.tempfile:
+    state: directory
+  register: kubectl_temp
+  tags:
+    - install
+  when: ansible_system != "Win32NT"
+
+- name: Create Kubectl shell completions for Unix
+  ansible.builtin.shell:
+    cmd: >-
+      kubectl completion {{ item }} > {{ kubectl_temp.path }}/kubectl.{{ item }}
+  become: true
+  changed_when: true
+  environment:
+    PATH: /opt/homebrew/bin:/usr/local/bin:{{ ansible_env.PATH }}
+  loop:
+    - bash
+#    - fish
+  tags:
+    - completion
+    - install
+  when: ansible_system != "Win32NT"
+
+- name: Install Kubectl shell completions for Unix
+  ansible.builtin.copy:
+    dest: "{{ item.dest }}"
+    force: true
+    mode: "644"
+    remote_src: true
+    src: "{{ kubectl_temp.path }}/kubectl.{{ item.shell }}"
+  become: true
+  loop:
+    - dest: "{{ bash_completion }}/kubectl"
+      shell: bash
+#    - dest: "{{ fish_completion }}/kubectl.fish"
+#      shell: fish
+  tags:
+    - completion
+    - install
+  when: ansible_system != "Win32NT"
+
+- name: Remove Kubectl temporary directory for Unix
+  ansible.builtin.file:
+    path: "{{ kubectl_temp.path }}"
+    state: absent
+  tags:
+    - install
+  when: ansible_system != "Win32NT"
+
+- name: Set k => kubectl alias
+  ansible.builtin.blockinfile:
+    path: "{{ user_home }}/.bashrc"
+    state: present
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - kubectl"
+    block: |
+      alias k=kubectl
+  when: ansible_system == "Linux"

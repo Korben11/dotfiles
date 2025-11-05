@@ -1,5 +1,37 @@
 - name: Install HELM
   ansible.builtin.import_role:
     name: somaz94.ansible_k8s_iac_tool.install_helm
+- name: Install kubectl
+  include_tasks: kubectl.yml
 - name: Install Kind (tool for running local Kubernetes clusters)
   include_tasks: kind.yml
+- name: Install K9s
+  ansible.builtin.import_role:
+    name: scruffaluff.bootware.k9s
+- name: Install krew
+  vars:
+    krew_plugins_:
+      always:
+        - cnpg
+      Darwin:
+        - ctx
+        - ns
+      FreeBSD:
+        - ctx
+        - ns
+      Linux:
+        - ctx
+        - ns
+      Win32NT: [ ]
+    krew_plugins: >-
+      {{ krew_plugins_.always + krew_plugins_.get(ansible_system, []) }}
+  ansible.builtin.import_role:
+    name: scruffaluff.bootware.krew
+- name: Add krew to PATH
+  ansible.builtin.blockinfile:
+    path: "{{ user_home }}/.bashrc"
+    state: present
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - krew"
+    block: |
+      export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
+  when: ansible_system == "Linux"

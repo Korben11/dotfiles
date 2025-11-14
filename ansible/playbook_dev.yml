@@ -1,0 +1,7 @@
+---
+- name: Install apps
+  hosts: localhost
+  tasks:
+    - name: Terminal tools setup
+      ansible.builtin.import_role:
+        name: terminal

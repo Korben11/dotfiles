@@ -1,0 +1,13 @@
+---
+- name: Create bin directory in user's home
+  ansible.builtin.file:
+    path: "{{ user_home }}/.local/bin"
+    state: directory
+    mode: '0775'
+
+# https://github.com/ko1nksm/shdotenv
+- name: Download shdotenv binary
+  ansible.builtin.get_url:
+    url: https://github.com/ko1nksm/shdotenv/releases/latest/download/shdotenv
+    dest: "{{ user_home }}/.local/bin/shdotenv"
+    mode: '0755'

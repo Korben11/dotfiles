@@ -11,3 +11,14 @@
     url: https://github.com/ko1nksm/shdotenv/releases/latest/download/shdotenv
     dest: "{{ user_home }}/.local/bin/shdotenv"
     mode: '0755'
+
+# https://github.com/fcsonline/drill
+# present latest version throws segmentation fault, install it using cargo
+- name: Download drill binary (http load testing)
+  ansible.builtin.unarchive:
+    src: https://github.com/fcsonline/drill/releases/latest/download/drill_0.8.3_x86_64-unknown-linux-musl.tar.gz
+    remote_src: true
+    dest: "{{ user_home }}/.local/bin/"
+    include:
+      - drill
+    mode: '0755'

@@ -5,6 +5,8 @@ roles:
     version: 1.5.2
   # https://github.com/alvistack/ansible-role-baobab
   - name: alvistack.baobab
+  # https://github.com/andrewrothstein/ansible-protoc/tree/main
+  - name: andrewrothstein.protoc
 collections:
   # https://galaxy.ansible.com/ui/repo/published/somaz94/ansible_k8s_iac_tool/
   - name: somaz94.ansible_k8s_iac_tool

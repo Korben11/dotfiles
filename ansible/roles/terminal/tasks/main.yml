@@ -22,3 +22,8 @@
     include:
       - drill
     mode: '0755'
+
+- name: protobuf gRPC
+  become: true
+  ansible.builtin.import_role:
+    name: andrewrothstein.protoc

@@ -12,11 +12,22 @@
     dest: "{{ user_home }}/.local/bin/shdotenv"
     mode: '0755'
 
+- name: Get latest drill version for Linux
+  ansible.builtin.uri:
+    method: GET
+    return_content: true
+    url: https://formulae.brew.sh/api/formula/drill.json
+  register: drill_formula
+  tags:
+    - install
+  when: ansible_system == "Linux"
+
 # https://github.com/fcsonline/drill
 # present latest version throws segmentation fault, install it using cargo
 - name: Download drill binary (http load testing)
   ansible.builtin.unarchive:
-    src: https://github.com/fcsonline/drill/releases/latest/download/drill_0.8.3_x86_64-unknown-linux-musl.tar.gz
+    src: https://github.com/fcsonline/drill/releases/latest/download/drill_{{
+      drill_formula.json.versions.stable }}_x86_64-unknown-linux-musl.tar.gz
     remote_src: true
     dest: "{{ user_home }}/.local/bin/"
     include:
@@ -27,3 +38,25 @@
   become: true
   ansible.builtin.import_role:
     name: andrewrothstein.protoc
+
+- name: Get latest grafanactl version for Linux
+  ansible.builtin.uri:
+    method: GET
+    return_content: true
+    url: https://formulae.brew.sh/api/formula/grafanactl.json
+  register: grafanactl_formula
+  tags:
+    - install
+  when: ansible_system == "Linux"
+
+- name: Install Grafana ctl for Linux
+  ansible.builtin.unarchive:
+    src: https://github.com/grafana/grafanactl/releases/download/v{{grafanactl_formula.json.versions.stable }}/grafanactl_Linux_x86_64.tar.gz
+    remote_src: true
+    dest: "{{ user_home }}/.local/bin/"
+    include:
+      - grafanactl
+    mode: "755"
+  tags:
+    - install
+  when: ansible_system == "Linux"

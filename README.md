@@ -10,5 +10,5 @@ uvx --from ansible-core ansible-playbook playbook_apps.yml -K
 
 ```shell
 # run playbook for quick try-outs
-uvx --from ansible-core ansible-playbook playbook_tryout.yml -K
+uvx --from ansible-core ansible-playbook playbook_dev.yml -K
 ```

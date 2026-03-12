@@ -12,6 +12,39 @@
     dest: "{{ user_home }}/.local/bin/shdotenv"
     mode: '0755'
 
+- name: Install BTop, terminal resources monitoring
+  become: true
+  ansible.builtin.apt:
+    name: btop
+    state: present
+
+# https://github.com/pythops/impala
+# TODO: set up NetworkManager to use "iwd"
+# sudo apt install iwd
+
+# sudo bash -c 'cat > /etc/NetworkManager/conf.d/iwd.conf <<EOF
+# [device]
+# wifi.backend=iwd
+# EOF'
+
+# Disable wpa_supplicant:
+# sudo systemctl stop wpa_supplicant.service
+# sudo systemctl mask wpa_supplicant.service
+
+# sudo systemctl restart NetworkManager
+
+- name: Install impala, terminal wifi management tool
+  become: true
+  community.general.cargo:
+    name: impala
+    path: /usr/local
+  # cmd: cargo install ripgrep --root /usr/local
+  #    creates: /usr/local/bin/rg
+#  ansible.builtin.get_url:
+#    url: https://github.com/pythops/impala/releases/latest/download/impala-x86_64-unknown-linux-musl
+#    dest: "{{ user_home }}/.local/bin/impala"
+#    mode: '0755'
+
 - name: Get latest drill version for Linux
   ansible.builtin.uri:
     method: GET
@@ -60,3 +93,12 @@
   tags:
     - install
   when: ansible_system == "Linux"
+
+# TODO: install pipewire
+# sudo apt install pipewire pipewire-audio-client-libraries pipewire-pulse wireplumber
+#- name: Install wire mix, terminal audio mixer tool
+#  community.general.cargo:
+#    name: wiremix
+
+# TODO: add walker: Walker - A Modern Application Launcher
+# https://github.com/abenz1267/walker

@@ -1,3 +1,5 @@
 ---
 dependencies:
   - role: scruffaluff.bootware.variable
+  - role: robertdebock.cargo
+    become: true

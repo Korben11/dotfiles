@@ -2,3 +2,8 @@
   become: true
   ansible.builtin.import_role:
     name: alvistack.baobab
+- name: Install ncdu, curses-based version of the well-known 'du'
+  become: true
+  ansible.builtin.apt:
+    name: ncdu
+    state: present

@@ -1,0 +1,10 @@
+#!/bin/bash
+set -e
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+ANSIBLE_DIR="$REPO_ROOT/ansible"
+ENCRYPT_SCRIPT="$REPO_ROOT/scripts/ansible_encrypt.sh"
+
+# Run your existing script against the repo
+cd "$ANSIBLE_DIR"
+"$ENCRYPT_SCRIPT" "$ANSIBLE_DIR"

@@ -1,0 +1,10 @@
+---
+vault_tools_prefix: /usr/local
+vault_tools_bindir: "{{ vault_tools_prefix }}/bin"
+# Where the scripts live relative to the repo; adjust if needed
+vault_tools_src_dir: "{{ playbook_dir }}/scripts/git/tools"
+
+# User whose ~/.gitconfig is configured
+vault_tools_user: "{{ ansible_user_id }}"
+#vault_tools_user_home: "{{ lookup('ansible.builtin.env', 'HOME') if vault_tools_user == ansible_user_id else '/home/' ~ vault_tools_user }}"
+vault_tools_user_home: "{{ ansible_env.HOME }}"

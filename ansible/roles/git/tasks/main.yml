@@ -1,0 +1,31 @@
+---
+- name: Ensure bin directory exists
+  ansible.builtin.file:
+    path: "{{ vault_tools_bindir }}"
+    state: directory
+    mode: "0755"
+
+- name: Install ansible-vault-tools scripts
+  ansible.builtin.copy:
+    src: "{{ item.src }}"
+    dest: "{{ vault_tools_bindir }}/{{ item.dest }}"
+    mode: "0755"
+  loop:
+    - { src: ansible-vault-merge.sh, dest: ansible-vault-merge }
+    - { src: gpg-vault-password-file.sh, dest: gpg-vault-password-file }
+  become: true
+
+- name: Configure ~/.gitconfig for ansible-vault diff and merge
+  community.general.git_config:
+    scope: file
+    file: "{{ vault_tools_user_home }}/.gitconfig"
+    name: "{{ item.name }}"
+    value: "{{ item.value }}"
+  loop:
+    - { name: diff.ansible-vault.textconv, value: "ansible-vault view" }
+    - { name: diff.ansible-vault.cachetextconv, value: "false" }
+    - { name: merge.ansible-vault.name, value: "ansible-vault merge driver" }
+    - name: merge.ansible-vault.driver
+      value: "{{ vault_tools_bindir }}/ansible-vault-merge -- %O %A %B %P"
+  become: true
+  become_user: "{{ vault_tools_user }}"

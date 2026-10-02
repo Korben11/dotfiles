@@ -8,7 +8,17 @@ uvx --from ansible-core ansible-playbook playbook_apps.yml -K
 
 ## dev
 
+install git hooks:
+
+    ./scripts/git/install-hooks.sh
+
 ```shell
 # run playbook for quick try-outs
 uvx --from ansible-core ansible-playbook playbook_dev.yml -K
+```
+
+```shell
+# encrypt *.decrypted files
+cd ansible
+../scripts/ansible_encrypt.sh $PWD
 ```

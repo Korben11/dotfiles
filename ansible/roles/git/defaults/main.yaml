@@ -5,6 +5,6 @@ vault_tools_bindir: "{{ vault_tools_prefix }}/bin"
 vault_tools_src_dir: "{{ playbook_dir }}/scripts/git/tools"
 
 # User whose ~/.gitconfig is configured
-vault_tools_user: "{{ ansible_user_id }}"
-#vault_tools_user_home: "{{ lookup('ansible.builtin.env', 'HOME') if vault_tools_user == ansible_user_id else '/home/' ~ vault_tools_user }}"
-vault_tools_user_home: "{{ ansible_env.HOME }}"
+vault_tools_user: "{{ ansible_facts['user_id'] }}"
+#vault_tools_user_home: "{{ lookup('ansible.builtin.env', 'HOME') if vault_tools_user == ansible_facts['user_id'] else '/home/' ~ vault_tools_user }}"
+vault_tools_user_home: "{{ ansible_facts['env']['HOME'] }}"

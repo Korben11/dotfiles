@@ -2,6 +2,8 @@
 
 ```shell
 cd ansible
+# make suer uv is installed
+curl -LsSf https://astral.sh/uv/install.sh | sh
 uvx --from ansible-core ansible-galaxy install -r requirements.yml
 uvx --from ansible-core ansible-playbook playbook_apps.yml -K
 ```

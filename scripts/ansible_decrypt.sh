@@ -12,5 +12,5 @@ find "${search_path}" -name "vault.*" ! -name "*.decrypted" | while read -r f; d
   out="${f}.decrypted"
 
   echo "Decrypting: $f -> $out"
-  ansible-vault decrypt --output="$out" "$f"
+  uvx --from ansible-core ansible-vault decrypt --output="$out" "$f"
 done

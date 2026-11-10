@@ -9,7 +9,7 @@
     update_cache: true
   tags:
     - install
-  when: ansible_pkg_mgr == "apk"
+  when: ansible_facts['pkg_mgr'] == "apk"
 
 - name: Install Kubectl for FreeBSD
   become: true
@@ -17,7 +17,7 @@
     name: kubectl
   tags:
     - install
-  when: ansible_system == "FreeBSD"
+  when: ansible_facts['system'] == "FreeBSD"
 
 - name: Install Kubectl for Linux
   ansible.builtin.package:
@@ -27,7 +27,7 @@
   register: kubectl_linux
   tags:
     - install
-  when: ansible_system == "Linux" and ansible_pkg_mgr != "apk"
+  when: ansible_facts['system'] == "Linux" and ansible_facts['pkg_mgr'] != "apk"
 
 - name: Get latest Kubectl version for Linux
   ansible.builtin.uri:
@@ -38,7 +38,7 @@
   tags:
     - install
   when: >-
-    ansible_system == "Linux" and ansible_pkg_mgr != "apk" and kubectl_linux is
+    ansible_facts['system'] == "Linux" and ansible_facts['pkg_mgr'] != "apk" and kubectl_linux is
     failed
 
 - name: Install Kubectl for Linux
@@ -53,7 +53,7 @@
   tags:
     - install
   when: >-
-    ansible_system == "Linux" and ansible_pkg_mgr != "apk" and kubectl_linux is
+    ansible_facts['system'] == "Linux" and ansible_facts['pkg_mgr'] != "apk" and kubectl_linux is
     failed
 
 - name: Install Kubectl for MacOS
@@ -63,7 +63,7 @@
     name: kubectl
   tags:
     - install
-  when: ansible_system == "Darwin"
+  when: ansible_facts['system'] == "Darwin"
 
 - name: Install Kubectl for Windows
   community.windows.win_scoop:
@@ -71,7 +71,7 @@
     name: kubectl
   tags:
     - install
-  when: ansible_system == "Win32NT"
+  when: ansible_facts['system'] == "Win32NT"
 
 - name: Create Kubectl temporary directory for Unix
   ansible.builtin.tempfile:
@@ -79,7 +79,7 @@
   register: kubectl_temp
   tags:
     - install
-  when: ansible_system != "Win32NT"
+  when: ansible_facts['system'] != "Win32NT"
 
 - name: Create Kubectl shell completions for Unix
   ansible.builtin.shell:
@@ -88,14 +88,14 @@
   become: true
   changed_when: true
   environment:
-    PATH: /opt/homebrew/bin:/usr/local/bin:{{ ansible_env.PATH }}
+    PATH: /opt/homebrew/bin:/usr/local/bin:{{ ansible_facts['env']['PATH'] }}
   loop:
     - bash
 #    - fish
   tags:
     - completion
     - install
-  when: ansible_system != "Win32NT"
+  when: ansible_facts['system'] != "Win32NT"
 
 - name: Install Kubectl shell completions for Unix
   ansible.builtin.copy:
@@ -113,7 +113,7 @@
   tags:
     - completion
     - install
-  when: ansible_system != "Win32NT"
+  when: ansible_facts['system'] != "Win32NT"
 
 - name: Remove Kubectl temporary directory for Unix
   ansible.builtin.file:
@@ -121,7 +121,7 @@
     state: absent
   tags:
     - install
-  when: ansible_system != "Win32NT"
+  when: ansible_facts['system'] != "Win32NT"
 
 - name: Set k => kubectl alias
   ansible.builtin.blockinfile:
@@ -130,4 +130,4 @@
     marker: "# {mark} ANSIBLE MANAGED BLOCK - kubectl"
     block: |
       alias k=kubectl
-  when: ansible_system == "Linux"
+  when: ansible_facts['system'] == "Linux"

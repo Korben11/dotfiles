@@ -16,17 +16,17 @@ while IFS= read -r -d '' f; do
 
   if [ ! -f "$out" ]; then
     echo "Encrypting (new): $f -> $out"
-    ansible-vault encrypt --output="$out" "$f"
+    uvx --from ansible-core ansible-vault encrypt --output="$out" "$f"
     CHANGED_FILES+=("$out")
     continue
   fi
 
   # Compare plaintext content: existing encrypted file (decrypted) vs current .decrypted source
-  file_diff=$(diff <(ansible-vault view "$out") "$f" || true)
+  file_diff=$(diff <(uvx --from ansible-core ansible-vault view "$out") "$f" || true)
 
   if [ -n "$file_diff" ]; then
     echo "Change detected in: $f"
-    ansible-vault encrypt --output="$out" "$f"
+    uvx --from ansible-core ansible-vault encrypt --output="$out" "$f"
     CHANGED_FILES+=("$out")
     DIFF_OUTPUT+=$'\n'"--- $out ---"$'\n'"$file_diff"$'\n'
   fi

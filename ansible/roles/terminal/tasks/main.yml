@@ -53,7 +53,7 @@
   register: drill_formula
   tags:
     - install
-  when: ansible_system == "Linux"
+  when: ansible_facts['system'] == "Linux"
 
 # https://github.com/fcsonline/drill
 # present latest version throws segmentation fault, install it using cargo
@@ -80,7 +80,7 @@
   register: grafanactl_formula
   tags:
     - install
-  when: ansible_system == "Linux"
+  when: ansible_facts['system'] == "Linux"
 
 - name: Install Grafana ctl for Linux
   ansible.builtin.unarchive:
@@ -92,7 +92,7 @@
     mode: "755"
   tags:
     - install
-  when: ansible_system == "Linux"
+  when: ansible_facts['system'] == "Linux"
 
 # TODO: install pipewire
 # sudo apt install pipewire pipewire-audio-client-libraries pipewire-pulse wireplumber

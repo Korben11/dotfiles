@@ -29,3 +29,10 @@
       value: "{{ vault_tools_bindir }}/ansible-vault-merge -- %O %A %B %P"
   become: true
   become_user: "{{ vault_tools_user }}"
+
+- name: Use github.korben ssh alias as dotfiles remote
+  community.general.git_config:
+    scope: local
+    repo: "{{ playbook_dir | dirname }}"
+    name: remote.origin.url
+    value: git@github.korben:Korben11/dotfiles.git

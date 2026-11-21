@@ -20,5 +20,4 @@
     src: "{{ item }}"
     dest: "{{ ansible_facts['env']['HOME'] }}/.ssh/{{ item | basename | regex_replace('^vault\\.', '') }}"
     mode: "0600"
-  with_fileglob:
-    - ssh/*
+  loop: "{{ query('fileglob', role_path ~ '/files/ssh/*') | reject('search', '\\.decrypted$') | list }}"

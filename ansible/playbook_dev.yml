@@ -5,3 +5,12 @@
     - name: ssh setup
       ansible.builtin.import_role:
         name: ssh
+
+    - name: Verify dotfiles remote is reachable
+      ansible.builtin.command:
+        cmd: git ls-remote --exit-code origin HEAD
+        chdir: "{{ playbook_dir | dirname }}"
+      environment:
+        GIT_SSH_COMMAND: ssh -o BatchMode=yes -o StrictHostKeyChecking=accept-new
+      changed_when: false
+      check_mode: false

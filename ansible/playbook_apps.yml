@@ -5,6 +5,9 @@
     - name: Terminal tools setup
       ansible.builtin.import_role:
         name: terminal
+    - name: Neovim config setup
+      ansible.builtin.import_role:
+        name: nvim
     - name: Clipboard manager setup
       ansible.builtin.import_role:
         name: gpaste

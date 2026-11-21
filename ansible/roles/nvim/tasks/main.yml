@@ -1,0 +1,44 @@
+---
+# Every plugin spec in config/nvim/lua/plugins is symlinked into the
+# LazyVim (Omarchy) config, so new plugins only need a new file in the repo.
+- name: Ensure nvim plugins directory exists
+  ansible.builtin.file:
+    path: "{{ user_home }}/.config/nvim/lua/plugins"
+    state: directory
+    mode: "0755"
+
+- name: Link nvim plugin specs
+  ansible.builtin.file:
+    src: "{{ item }}"
+    dest: "{{ user_home }}/.config/nvim/lua/plugins/{{ item | basename }}"
+    state: link
+    force: true
+  with_fileglob:
+    - "{{ playbook_dir }}/../config/nvim/lua/plugins/*.lua"
+
+# Drop links to specs that were removed from the repo (dangling symlinks).
+# Only links pointing into this repo are touched; Omarchy's own links
+# (e.g. theme.lua) are left alone.
+- name: Find nvim plugin spec links
+  ansible.builtin.find:
+    paths: "{{ user_home }}/.config/nvim/lua/plugins"
+    file_type: link
+  register: nvim_plugin_links
+
+- name: Stat nvim plugin spec links
+  ansible.builtin.stat:
+    path: "{{ item.path }}"
+    follow: false
+  loop: "{{ nvim_plugin_links.files }}"
+  register: nvim_plugin_link_stats
+
+- name: Remove dangling nvim plugin spec links
+  ansible.builtin.file:
+    path: "{{ item.stat.path }}"
+    state: absent
+  loop: "{{ nvim_plugin_link_stats.results }}"
+  loop_control:
+    label: "{{ item.stat.path }}"
+  when:
+    - item.stat.lnk_source.startswith((playbook_dir ~ '/../config/nvim/') | realpath)
+    - not (item.stat.lnk_source is exists)
